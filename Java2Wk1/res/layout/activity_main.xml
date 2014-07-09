@@ -1,0 +1,48 @@
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/container"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.michaelusry.java2wk1.MainActivity"
+    tools:ignore="MergeRootFrame" >
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical" >
+
+        <Button
+            android:id="@+id/btn_read"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/btn_read" />
+
+        <Button
+            android:id="@+id/btn_write"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/btn_write" />
+
+        <TextView
+            android:id="@+id/TitleTextView"
+            android:layout_weight="1"
+            android:layout_width="0dip"
+            android:paddingLeft="5dp"
+            android:layout_height="wrap_content" />
+
+        <TextView
+            android:id="@+id/DepthTextView"
+            android:layout_weight="1"
+            android:layout_width="0dip"
+            android:paddingLeft="5dp"
+            android:layout_height="wrap_content" />
+
+        <TextView
+            android:id="@+id/MagTextView"
+            android:layout_weight="1"
+            android:layout_width="0dip"
+            android:paddingLeft="5dp"
+            android:layout_height="wrap_content" />
+    </LinearLayout>
+
+</FrameLayout>
