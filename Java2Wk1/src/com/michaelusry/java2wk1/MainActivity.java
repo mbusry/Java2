@@ -20,11 +20,27 @@
  */
 package com.michaelusry.java2wk1;
 
+import java.io.File;
+import java.lang.ref.WeakReference;
+import java.util.ArrayList;
+import java.util.HashMap;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import com.michaelusry.javaWk4.ConnectionStatus;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.Fragment;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
+import android.os.Messenger;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -32,52 +48,95 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.SimpleAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
 
 public class MainActivity extends Activity {
 
+	public static final String TAG = MainActivity.class.getSimpleName();
 	private TextView TitleTextView;
 	private TextView DepthTextView;
 	private TextView MagTextView;
-	private Button readButton;
-	private Button writeButton;
 
-	FileManager m_file;
+	static MyService collector;
+	static FileManager fileManager;
 
-	Context m_context;
-	String m_file_name = "quake_json_from_url.txt";
+	static Context m_context;
+	static String filename = "quake_json.txt";
+
+	final MyHandler myHandler = new MyHandler(this);
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+
+		System.out.println("In MainActivity:Beginning");
+
 		setContentView(R.layout.activity_main);
+
+		TitleTextView = (TextView) findViewById(R.id.TitleTextView);
+
 		m_context = this;
-		m_file = FileManager.getInstance();
+		fileManager = FileManager.getInstance();
+		System.out.println("Instance of FileManager");
+		System.out.println("m_context: " + m_context);
+		System.out.println("filename: " + filename);
 		
-//		TitleTextView = (TextView) findViewById(R.id.TitleTextView);
-//		DepthTextView = (TextView) findViewById(R.id.DepthTextView);
-//		MagTextView = (TextView) findViewById(R.id.MagTextView);
+		ConnectionStatus cs = new ConnectionStatus();
 
+		if (cs.isOnline(this)) {
 
+		} else {
+			File fileCheck = getBaseContext().getFileStreamPath(filename);
+			if (fileCheck.exists()) {
+				// if the user is not connected let them know it is required but
+				// show old results form the file
+				AlertDialog.Builder alert = new AlertDialog.Builder(this);
+				alert.setTitle("No connection to the internet.  I'll be using local data.")
+						.setPositiveButton("ok", null);
 
-		readButton = (Button)findViewById(R.id.btn_read);
-		readButton.setOnClickListener(new OnClickListener() {
-
-			@Override
-			public void onClick(View arg0) {
-				Toast.makeText(m_context, "readButton", Toast.LENGTH_SHORT).show();
+				alert.show();
+				parseJSONToList();
+			} else {
+				// if the user is not connected let them know it is required
+				AlertDialog.Builder alert = new AlertDialog.Builder(this);
+				alert.setTitle("An internet connection is required.")
+						.setPositiveButton("ok", null);
+				alert.show();
+				return;
 			}
-		});
+		}
 		
-		writeButton = (Button) findViewById(R.id.btn_write);
-		writeButton.setOnClickListener(new OnClickListener(){
-			@Override
-			public void onClick(View arg0) {
-				Toast.makeText(m_context, "writeButton", Toast.LENGTH_SHORT).show();
+		File fileCheck = getBaseContext().getFileStreamPath(filename);
+		if (fileCheck.exists()) {
+			System.out.println("going to parseJSONToList()");
+			parseJSONToList();
+		} else {
+			System.out.println("no file here run getData()");
+			getData();
+		}
 
-			}
-		});
+		String response = fileManager.readFromFile(m_context, filename);
+
+		System.out.println("String response : " + response);
+
+		ArrayList<HashMap<String, String>> myList = new ArrayList<HashMap<String, String>>();
+
+		try {
+			JSONObject jsonResponse = new JSONObject(response);
+			JSONArray quakes = jsonResponse.getJSONArray("quakes");
+			Log.i(TAG, "JSON: " + quakes);
+
+		} catch (JSONException e) {
+			Log.e(TAG, "JSONError: " + e);
+		}
+
+		// SimpleAdapter adapter = new SimpleAdapter(this,TitleTextView,
+		// R.layout.TitleTextView, new String[]{"title","depth","mag"});
+
+		// set Adapter
+		// setListAdapter(adapter);
 	}
 
 	@Override
@@ -117,8 +176,84 @@ public class MainActivity extends Activity {
 		}
 	}
 
+	private static class MyHandler extends Handler {
 
-	public void displayData() {
+		private final WeakReference<MainActivity> myActivity;
+
+		public MyHandler(MainActivity activity) {
+			myActivity = new WeakReference<MainActivity>(activity);
+
+		}
+
+		public void handleMessage(Message message) {
+
+			MainActivity activity = myActivity.get();
+
+			if (activity != null) {
+				Object returnObject = message.obj;
+
+				if (message.arg1 == RESULT_OK && returnObject != null) {
+
+					Log.i("MAIN ACTIVITY", "handleMessage()");
+
+					String response = (String) returnObject;
+
+					fileManager = FileManager.getInstance();
+
+					fileManager.writeToFile(m_context, filename, response);
+
+					Log.i(TAG, "File written to device");
+					// Call Method to read/parse quake_json.txt file
+
+				} else {
+					Log.i(TAG, "Data not created");
+				}
+			}
+		}
+	}
+
+	public void getData() {
+		Messenger newMessenger = new Messenger(myHandler);
+
+		System.out.println("getData");
+
+		Intent newIntent = new Intent(this, MyService.class);
+
+		newIntent.putExtra(MyService.MESSENGER_KEY, newMessenger);
+
+		startService(newIntent);
+	}
+
+	public static void parseJSONToList() {
+
+		System.out.println("parseJSONToList");
+		// vars
+		JSONArray dataArray = null;
+		String title = null;
+		JSONObject quakeObject = null;
+		String depth = null;
+		JSONObject magObject = null;
+		String mag = null;
+
+		ArrayList<HashMap<String, String>> arrayList = new ArrayList<HashMap<String, String>>();
+
+		String dataString = FileManager.readFromFile(m_context, filename);
+		System.out.println("dataString: " + dataString);
+
+		try {
+
+			dataArray = new JSONArray(dataString);
+			System.out.println("dataArray: " + dataArray);
+
+		} catch (JSONException e) {
+			e.printStackTrace();
+		}
+
+		for (int i = 0; i < dataArray.length(); i++) {
+			System.out.println("dataArray: " + dataArray);
+			System.out.println("dataArray.length: " + dataArray.length());
+
+		}
 
 	}
 
