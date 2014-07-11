@@ -32,8 +32,6 @@ public class MyService extends IntentService {
 		Bundle extras = intent.getExtras();
 		Messenger messenger = (Messenger) extras.get(MESSENGER_KEY);
 
-		// Not used at this time
-		// finalURL = baseURL + userQuery;
 
 		try {
 			// create the URL from the variable at the top

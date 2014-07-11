@@ -7,15 +7,10 @@
  * 
  * date			Jul 8, 2014
  * 
- * The application should contain at least the following components:
-
-1 Intent to launch the Service
-1 Service correctly constructed in the MainActivity
-1 Web Call From the Service (API included)
-1 JSON Array stored in an Internal File within the Service onHandleIntent() method
-1 Handler method in the MainActivity to be used to update the UI (either in that method or calling a method to update)
-1 JSON string read from a file and correctly parsed and displayed from the Handler method
-	
+ * purpose: This will access a json list of the last 50 quakes recorded.  The app checks
+ * for network connection.  If there is no connection it will check to see if there is a local
+ * file and display it as well as an alert.  If there is a connection the data is saved to a
+ * file and then displayed on the screen.	
  * 
  */
 package com.michaelusry.java2wk1;
@@ -118,11 +113,6 @@ public class MainActivity extends Activity {
 			getData();
 		}
 
-		// SimpleAdapter adapter = new SimpleAdapter(this,TitleTextView,
-		// R.layout.TitleTextView, new String[]{"title","depth","mag"});
-
-		// set Adapter
-		// setListAdapter(adapter);
 	}
 
 	@Override
@@ -219,7 +209,6 @@ public class MainActivity extends Activity {
 		String title = null;
 		JSONObject quakeObject = null;
 		String depth = null;
-//		JSONObject magObject = null;
 		String mag = null;
 
 		ArrayList<HashMap<String, String>> arrayList = new ArrayList<HashMap<String, String>>();
