@@ -45,20 +45,14 @@ import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.View.OnClickListener;
 import android.view.ViewGroup;
-import android.widget.Button;
+import android.widget.ListView;
 import android.widget.SimpleAdapter;
-import android.widget.TextView;
-import android.widget.Toast;
 
 public class MainActivity extends Activity {
 
 	public static final String TAG = MainActivity.class.getSimpleName();
-	private TextView TitleTextView;
-	private TextView DepthTextView;
-	private TextView MagTextView;
-
+	static ListView list;
 	static MyService collector;
 	static FileManager fileManager;
 
@@ -75,14 +69,19 @@ public class MainActivity extends Activity {
 
 		setContentView(R.layout.activity_main);
 
-		TitleTextView = (TextView) findViewById(R.id.TitleTextView);
 
 		m_context = this;
 		fileManager = FileManager.getInstance();
-		System.out.println("Instance of FileManager");
-		System.out.println("m_context: " + m_context);
-		System.out.println("filename: " + filename);
-		
+
+		// find the list by ID
+		list = (ListView) findViewById(R.id.list);
+
+		// inflate the custom list header
+		View ListHeader = this.getLayoutInflater().inflate(
+				R.layout.list_header, null);
+		// add the header to the custom list
+		list.addHeaderView(ListHeader);
+
 		ConnectionStatus cs = new ConnectionStatus();
 
 		if (cs.isOnline(this)) {
@@ -93,7 +92,8 @@ public class MainActivity extends Activity {
 				// if the user is not connected let them know it is required but
 				// show old results form the file
 				AlertDialog.Builder alert = new AlertDialog.Builder(this);
-				alert.setTitle("No connection to the internet.  I'll be using local data.")
+				alert.setTitle(
+						"No connection to the internet.  I'll be using local data.")
 						.setPositiveButton("ok", null);
 
 				alert.show();
@@ -101,13 +101,14 @@ public class MainActivity extends Activity {
 			} else {
 				// if the user is not connected let them know it is required
 				AlertDialog.Builder alert = new AlertDialog.Builder(this);
-				alert.setTitle("An internet connection is required.")
+				alert.setTitle(
+						"An internet connection is required. I have no local file.")
 						.setPositiveButton("ok", null);
 				alert.show();
 				return;
 			}
 		}
-		
+
 		File fileCheck = getBaseContext().getFileStreamPath(filename);
 		if (fileCheck.exists()) {
 			System.out.println("going to parseJSONToList()");
@@ -115,21 +116,6 @@ public class MainActivity extends Activity {
 		} else {
 			System.out.println("no file here run getData()");
 			getData();
-		}
-
-		String response = fileManager.readFromFile(m_context, filename);
-
-		System.out.println("String response : " + response);
-
-		ArrayList<HashMap<String, String>> myList = new ArrayList<HashMap<String, String>>();
-
-		try {
-			JSONObject jsonResponse = new JSONObject(response);
-			JSONArray quakes = jsonResponse.getJSONArray("quakes");
-			Log.i(TAG, "JSON: " + quakes);
-
-		} catch (JSONException e) {
-			Log.e(TAG, "JSONError: " + e);
 		}
 
 		// SimpleAdapter adapter = new SimpleAdapter(this,TitleTextView,
@@ -204,6 +190,7 @@ public class MainActivity extends Activity {
 
 					Log.i(TAG, "File written to device");
 					// Call Method to read/parse quake_json.txt file
+					parseJSONToList();
 
 				} else {
 					Log.i(TAG, "Data not created");
@@ -232,7 +219,7 @@ public class MainActivity extends Activity {
 		String title = null;
 		JSONObject quakeObject = null;
 		String depth = null;
-		JSONObject magObject = null;
+//		JSONObject magObject = null;
 		String mag = null;
 
 		ArrayList<HashMap<String, String>> arrayList = new ArrayList<HashMap<String, String>>();
@@ -249,12 +236,39 @@ public class MainActivity extends Activity {
 			e.printStackTrace();
 		}
 
-		for (int i = 0; i < dataArray.length(); i++) {
-			System.out.println("dataArray: " + dataArray);
-			System.out.println("dataArray.length: " + dataArray.length());
+		for (int i = 1; i < dataArray.length(); i++) {
+			// System.out.println("dataArray: " + dataArray);
+			// System.out.println("dataArray.length: " + dataArray.length());
+
+			try {
+				quakeObject = (JSONObject) dataArray.get(i);
+
+				title = quakeObject.getString("title");
+
+				depth = quakeObject.getString("depth");
+
+				mag = quakeObject.getString("mag");
+
+			} catch (JSONException e) {
+				e.printStackTrace();
+			}
+
+			HashMap<String, String> quakeList = new HashMap<String, String>();
+
+			quakeList.put("title", title);
+			quakeList.put("depth", depth);
+			quakeList.put("mag", mag);
+
+			arrayList.add(quakeList);
 
 		}
 
+		SimpleAdapter adapter = new SimpleAdapter(m_context, arrayList,
+				R.layout.list_row, new String[] { "title", "depth", "mag" },
+				new int[] { R.id.title, R.id.depth, R.id.mag });
+
+		list.setAdapter(adapter);
+		
 	}
 
 }
