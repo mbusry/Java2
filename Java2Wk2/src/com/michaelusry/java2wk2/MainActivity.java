@@ -192,14 +192,16 @@ public class MainActivity extends Activity {
 					String thisTime = ((JSONObject) dataArray.get(arg2)).getString("time");
 					
 					detailActivity.putExtra("title", thisTitle);
-					detailActivity.putExtra("title", thisLink);
-					detailActivity.putExtra("title", thisNorth);
-					detailActivity.putExtra("title", thisWest);
-					detailActivity.putExtra("title", thisLat);
-					detailActivity.putExtra("title", thisLng);
-					detailActivity.putExtra("title", thisDepth);
-					detailActivity.putExtra("title", thisMag);
-					detailActivity.putExtra("title", thisTime);
+					detailActivity.putExtra("link", thisLink);
+					detailActivity.putExtra("north", thisNorth);
+					detailActivity.putExtra("west", thisWest);
+					detailActivity.putExtra("lat", thisLat);
+					detailActivity.putExtra("lng", thisLng);
+					detailActivity.putExtra("depth", thisDepth);
+					detailActivity.putExtra("mag", thisMag);
+					detailActivity.putExtra("time", thisTime);
+					
+					startActivityForResult(detailActivity, 0);
 
 
 				} catch (JSONException e) {
@@ -305,12 +307,12 @@ public class MainActivity extends Activity {
 		JSONObject quakeObject = null;
 		String depth = null;
 		String mag = null;
-		String north = null;
-		String west = null;
-		String lat = null;
-		String lng = null;
-		String timeStamp = null;
-		String link = null;
+//		String north = null;
+//		String west = null;
+//		String lat = null;
+//		String lng = null;
+//		String timeStamp = null;
+//		String link = null;
 
 		ArrayList<HashMap<String, String>> arrayList = new ArrayList<HashMap<String, String>>();
 
@@ -335,19 +337,21 @@ public class MainActivity extends Activity {
 
 				title = quakeObject.getString("title");
 
-				link = quakeObject.getString("link");
+				mag = quakeObject.getString("mag");
 
-				north = quakeObject.getString("north");
+//				link = quakeObject.getString("link");
 
-				west = quakeObject.getString("west");
-
-				lat = quakeObject.getString("lat");
-
-				lng = quakeObject.getString("lng");
+//				north = quakeObject.getString("north");
+//
+//				west = quakeObject.getString("west");
+//
+//				lat = quakeObject.getString("lat");
+//
+//				lng = quakeObject.getString("lng");
 
 				depth = quakeObject.getString("depth");
 
-				timeStamp = quakeObject.getString("time");
+//				timeStamp = quakeObject.getString("time");
 
 			} catch (JSONException e) {
 				e.printStackTrace();
