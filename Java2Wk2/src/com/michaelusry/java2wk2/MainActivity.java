@@ -16,6 +16,7 @@
 package com.michaelusry.java2wk2;
 
 import java.io.File;
+import java.io.Serializable;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -30,6 +31,7 @@ import com.michaelusry.javaWk4.ConnectionStatus;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Fragment;
+import android.app.AlertDialog.Builder;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -49,7 +51,7 @@ import android.widget.SimpleAdapter;
 
 public class MainActivity extends Activity {
 
-	public static final String TAG = MainActivity.class.getSimpleName();
+	static String TAG = MainActivity.class.getSimpleName();
 	static ListView list;
 	static MyService collector;
 	static FileManager fileManager;
@@ -59,7 +61,7 @@ public class MainActivity extends Activity {
 
 	final MyHandler myHandler = new MyHandler(this);
 	ConnectionStatus cs = new ConnectionStatus();
-	
+
 	static JSONArray dataArray = null;
 
 	static ArrayList<HashMap<String, String>> arrayList = new ArrayList<HashMap<String, String>>();
@@ -87,7 +89,11 @@ public class MainActivity extends Activity {
 			Log.i(TAG, "Restoring state");
 
 			savedInstanceState.getSerializable("saved");
+			
 			if (arrayList != null) {
+				Log.i(TAG, "arrayList != null(savedInstance");
+				System.out.println("savedInstance:arrayList = " + arrayList);
+				
 				SimpleAdapter adapter = new SimpleAdapter(m_context, arrayList,
 						R.layout.list_row, new String[] { "title", "mag",
 								"depth" }, new int[] { R.id.title, R.id.mag,
@@ -135,62 +141,48 @@ public class MainActivity extends Activity {
 			}
 		}
 		list.setOnItemClickListener(new OnItemClickListener() {
-			
-			
 
 			@Override
-			public void onItemClick(AdapterView<?> arg0, View arg1,
-					int arg2, long arg3) {
+			public void onItemClick(AdapterView<?> arg0, View arg1, int arg2,
+					long arg3) {
 				// TODO Auto-generated method stub
 				System.out.println("detailActivity:onClick");
 				System.out.println("arrayList arg2: " + (arg2));
-				try {
-					System.out.println("dataArray(JSON).get(arg2) : " + ((JSONObject) dataArray.get(arg2)).getString("title"));
-				} catch (JSONException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-
+				System.out.println("arrayList: " + arrayList);
 
 				Intent detailActivity = new Intent(getBaseContext(),
 						DetailActivity.class);
 
 				// Add array info to send to detailActivity
-				
+
+
 				try {
-					System.out.println("dataArray (arg2) : " + ((JSONObject) dataArray.get(arg2)).getString("title"));
-					System.out.println("dataArray (arg2) : " + ((JSONObject) dataArray.get(arg2)).getString("link"));
-					System.out.println("dataArray (arg2) : " + ((JSONObject) dataArray.get(arg2)).getString("north"));
-					System.out.println("dataArray (arg2) : " + ((JSONObject) dataArray.get(arg2)).getString("west"));
-					System.out.println("dataArray (arg2) : " + ((JSONObject) dataArray.get(arg2)).getString("lat"));
-					System.out.println("dataArray (arg2) : " + ((JSONObject) dataArray.get(arg2)).getString("lng"));
-					System.out.println("dataArray (arg2) : " + ((JSONObject) dataArray.get(arg2)).getString("depth"));
-					System.out.println("dataArray (arg2) : " + ((JSONObject) dataArray.get(arg2)).getString("mag"));
-					System.out.println("dataArray (arg2) : " + ((JSONObject) dataArray.get(arg2)).getString("time"));
+					String thisTitle = ((JSONObject) dataArray.get(arg2))
+							.getString("title");
+					String thisLink = ((JSONObject) dataArray.get(arg2))
+							.getString("link");
 
-				} catch (JSONException e1) {
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
-				}
-				
-				try {
-					String thisTitle = ((JSONObject) dataArray.get(arg2)).getString("title");
-					String thisLink = ((JSONObject) dataArray.get(arg2)).getString("link");
+					String thisNorth = ((JSONObject) dataArray.get(arg2))
+							.getString("north");
 
-					String thisNorth = ((JSONObject) dataArray.get(arg2)).getString("north");
+					String thisWest = ((JSONObject) dataArray.get(arg2))
+							.getString("west");
 
-					String thisWest = ((JSONObject) dataArray.get(arg2)).getString("west");
+					String thisLat = ((JSONObject) dataArray.get(arg2))
+							.getString("lat");
 
-					String thisLat = ((JSONObject) dataArray.get(arg2)).getString("lat");
+					String thisLng = ((JSONObject) dataArray.get(arg2))
+							.getString("lng");
 
-					String thisLng = ((JSONObject) dataArray.get(arg2)).getString("lng");
+					String thisDepth = ((JSONObject) dataArray.get(arg2))
+							.getString("depth");
 
-					String thisDepth = ((JSONObject) dataArray.get(arg2)).getString("depth");
-					
-					String thisMag = ((JSONObject) dataArray.get(arg2)).getString("mag");
+					String thisMag = ((JSONObject) dataArray.get(arg2))
+							.getString("mag");
 
-					String thisTime = ((JSONObject) dataArray.get(arg2)).getString("time");
-					
+					String thisTime = ((JSONObject) dataArray.get(arg2))
+							.getString("time");
+
 					detailActivity.putExtra("title", thisTitle);
 					detailActivity.putExtra("link", thisLink);
 					detailActivity.putExtra("north", thisNorth);
@@ -200,15 +192,14 @@ public class MainActivity extends Activity {
 					detailActivity.putExtra("depth", thisDepth);
 					detailActivity.putExtra("mag", thisMag);
 					detailActivity.putExtra("time", thisTime);
-					
-					startActivityForResult(detailActivity, 0);
 
+					startActivityForResult(detailActivity, 0);
 
 				} catch (JSONException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
-				
+
 			}
 		});
 	}
@@ -281,7 +272,7 @@ public class MainActivity extends Activity {
 					parseJSONToList();
 
 				} else {
-					Log.i(TAG, "Data not created");
+					Log.e(TAG, "Data not created");
 				}
 			}
 		}
@@ -304,17 +295,10 @@ public class MainActivity extends Activity {
 		System.out.println("parseJSONToList");
 		// vars
 		String title = null;
-		JSONObject quakeObject = null;
 		String depth = null;
 		String mag = null;
-//		String north = null;
-//		String west = null;
-//		String lat = null;
-//		String lng = null;
-//		String timeStamp = null;
-//		String link = null;
+		JSONObject quakeObject = null;
 
-		ArrayList<HashMap<String, String>> arrayList = new ArrayList<HashMap<String, String>>();
 
 		String dataString = FileManager.readFromFile(m_context, filename);
 		System.out.println("dataString: " + dataString);
@@ -322,15 +306,15 @@ public class MainActivity extends Activity {
 		try {
 
 			dataArray = new JSONArray(dataString);
-			System.out.println("dataArray: " + dataArray);
+			System.out.println("dataArray(JSON): " + dataArray);
 
 		} catch (JSONException e) {
 			e.printStackTrace();
 		}
 
 		for (int i = 1; i < dataArray.length(); i++) {
-//			 System.out.println("dataArray: " + dataArray);
-//			 System.out.println("dataArray.length: " + dataArray.length());
+			 System.out.println("dataArray(JSON): " + dataArray);
+			 System.out.println("dataArray(JSON).length: " + dataArray.length());
 
 			try {
 				quakeObject = (JSONObject) dataArray.get(i);
@@ -339,19 +323,7 @@ public class MainActivity extends Activity {
 
 				mag = quakeObject.getString("mag");
 
-//				link = quakeObject.getString("link");
-
-//				north = quakeObject.getString("north");
-//
-//				west = quakeObject.getString("west");
-//
-//				lat = quakeObject.getString("lat");
-//
-//				lng = quakeObject.getString("lng");
-
 				depth = quakeObject.getString("depth");
-
-//				timeStamp = quakeObject.getString("time");
 
 			} catch (JSONException e) {
 				e.printStackTrace();
@@ -364,6 +336,7 @@ public class MainActivity extends Activity {
 			quakeList.put("mag", mag);
 
 			arrayList.add(quakeList);
+			System.out.println("parsing JSON: arrayList = " + arrayList);
 
 		}
 
@@ -375,4 +348,44 @@ public class MainActivity extends Activity {
 
 	}
 
+	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+		Log.i(TAG, "onActivityResult()");
+
+		// variables
+		String quakeTitle = "";
+		String starRating = "";
+
+		// extra info from intent
+
+		Log.i(TAG, "I have extras");
+		// get extras from intent
+		// stars given with a default of 0
+		Float starFloat = data.getFloatExtra("stars", 0);
+		quakeTitle = data.getStringExtra("title");
+		starRating = Float.toString(starFloat);
+
+		// show AlertDialog
+
+		AlertDialog.Builder alert = new AlertDialog.Builder(this);
+		alert.setTitle(quakeTitle + " now has " + starRating + " stars");
+
+		alert.show();
+		super.onActivityResult(requestCode, resultCode, data);
+
+	}
+
+	@Override
+	protected void onSaveInstanceState(Bundle outState) {
+
+		super.onSaveInstanceState(outState);
+		System.out.println("onSaveInstanceState/arrayList: " + arrayList);
+
+		// check that the array is not null and not empty. then save the array
+		// to the bundle
+		if (arrayList != null && !arrayList.isEmpty()) {
+			outState.putSerializable("saved", (Serializable) arrayList);
+			Log.i(TAG, "State Saved");
+		}
+
+	}
 }

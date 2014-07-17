@@ -19,7 +19,7 @@
             android:text="@string/detail_title"
             android:textAlignment="center"
             android:textColor="#348b96"
-            android:textSize="25sp"
+            android:textSize="22sp"
             android:textStyle="bold" />
 
         <RatingBar
@@ -27,7 +27,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:numStars="3"
+            android:numStars="5"
             android:stepSize="1.0" />
 
         <TextView
@@ -38,7 +38,7 @@
             android:text="@string/detail_link"
             android:textAlignment="center"
             android:textColor="#333333"
-            android:textSize="20sp"
+            android:textSize="16sp"
             android:textStyle="italic" />
 
         <TextView
@@ -49,7 +49,7 @@
             android:text="@string/detail_north"
             android:textAlignment="center"
             android:textColor="#333333"
-            android:textSize="18sp"
+            android:textSize="16sp"
             android:textStyle="normal" />
 
         <TextView
@@ -60,7 +60,7 @@
             android:text="@string/detail_west"
             android:textAlignment="center"
             android:textColor="#333333"
-            android:textSize="18sp"
+            android:textSize="16sp"
             android:textStyle="normal" />
 
         <TextView
@@ -71,7 +71,7 @@
             android:text="@string/detail_lat"
             android:textAlignment="center"
             android:textColor="#333333"
-            android:textSize="18sp"
+            android:textSize="16sp"
             android:textStyle="normal" />
 
         <TextView
@@ -82,7 +82,7 @@
             android:text="@string/detail_lng"
             android:textAlignment="center"
             android:textColor="#333333"
-            android:textSize="18sp"
+            android:textSize="16sp"
             android:textStyle="normal" />
         
                 <TextView
@@ -93,7 +93,7 @@
             android:text="@string/detail_lng"
             android:textAlignment="center"
             android:textColor="#333333"
-            android:textSize="18sp"
+            android:textSize="16sp"
             android:textStyle="normal" />
                 
                         <TextView
@@ -104,7 +104,7 @@
             android:text="@string/detail_lng"
             android:textAlignment="center"
             android:textColor="#333333"
-            android:textSize="18sp"
+            android:textSize="16sp"
             android:textStyle="normal" />
                 
         
@@ -117,7 +117,7 @@
             android:text="@string/detail_time"
             android:textAlignment="center"
             android:textColor="#333333"
-            android:textSize="18sp"
+            android:textSize="16sp"
             android:textStyle="normal" />
 
         <Button
