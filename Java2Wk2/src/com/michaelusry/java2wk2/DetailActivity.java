@@ -70,7 +70,7 @@ public class DetailActivity extends Activity{
 		detail_mag = mainIntent.getStringExtra("mag");
 		detail_time = mainIntent.getStringExtra("time");
 		
-		// set the txt of views
+		// set the text of views
 		title.setText(detail_title);
 		link.setText("URL: " + detail_link);
 		north.setText("North: " + detail_north);
@@ -83,7 +83,8 @@ public class DetailActivity extends Activity{
 
 
 	}
-			
+		
+	//clicking the button goes to the web site
 	public void onClick(View view){
 		
 		Log.i(TAG,"intent: Launch web browser");
@@ -96,6 +97,7 @@ public class DetailActivity extends Activity{
 		
 	}
 	
+	//when the intent finishes send the info back to the MainActivity
 	@Override
 	public void finish() {
 

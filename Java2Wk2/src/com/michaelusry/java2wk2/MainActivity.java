@@ -1,5 +1,5 @@
 /*
- * Project		Java2Wk1
+ * Project		Java2Wk2
  * 
  * package		com.michaelusry.java2wk2
  * 
@@ -10,7 +10,9 @@
  * purpose: This will access a json list of the last 50 quakes recorded.  The app checks
  * for network connection.  If there is no connection it will check to see if there is a local
  * file and display it as well as an alert.  If there is a connection the data is saved to a
- * file and then displayed on the screen.	
+ * file and then displayed on the screen.  When you select a list of quakes another activity is
+ * displayed showing more information, the ability to launch a web browser and assign a star
+ * rating.  A saved state allows info to be passed back to the main activity	
  * 
  */
 package com.michaelusry.java2wk2;
@@ -131,6 +133,7 @@ public class MainActivity extends Activity {
 				}
 			}
 
+			//checking to see if the file is saved locally, if not get it.
 			File fileCheck = getBaseContext().getFileStreamPath(filename);
 			if (fileCheck.exists()) {
 				System.out.println("going to parseJSONToList()");
@@ -140,8 +143,10 @@ public class MainActivity extends Activity {
 				getData();
 			}
 		}
+		
 		list.setOnItemClickListener(new OnItemClickListener() {
-
+			
+			// when you click the list send to the DetailActivity
 			@Override
 			public void onItemClick(AdapterView<?> arg0, View arg1, int arg2,
 					long arg3) {
@@ -182,7 +187,8 @@ public class MainActivity extends Activity {
 
 					String thisTime = ((JSONObject) dataArray.get(arg2))
 							.getString("time");
-
+					
+					//info to send to the Intent
 					detailActivity.putExtra("title", thisTitle);
 					detailActivity.putExtra("link", thisLink);
 					detailActivity.putExtra("north", thisNorth);
@@ -193,6 +199,7 @@ public class MainActivity extends Activity {
 					detailActivity.putExtra("mag", thisMag);
 					detailActivity.putExtra("time", thisTime);
 
+					//start the activity
 					startActivityForResult(detailActivity, 0);
 
 				} catch (JSONException e) {
@@ -212,34 +219,6 @@ public class MainActivity extends Activity {
 		return true;
 	}
 
-	@Override
-	public boolean onOptionsItemSelected(MenuItem item) {
-		// Handle action bar item clicks here. The action bar will
-		// automatically handle clicks on the Home/Up button, so long
-		// as you specify a parent activity in AndroidManifest.xml.
-		int id = item.getItemId();
-		if (id == R.id.action_settings) {
-			return true;
-		}
-		return super.onOptionsItemSelected(item);
-	}
-
-	/**
-	 * A placeholder fragment containing a simple view.
-	 */
-	public static class PlaceholderFragment extends Fragment {
-
-		public PlaceholderFragment() {
-		}
-
-		@Override
-		public View onCreateView(LayoutInflater inflater, ViewGroup container,
-				Bundle savedInstanceState) {
-			View rootView = inflater.inflate(R.layout.fragment_main, container,
-					false);
-			return rootView;
-		}
-	}
 
 	private static class MyHandler extends Handler {
 
@@ -348,6 +327,7 @@ public class MainActivity extends Activity {
 
 	}
 
+	//The result when coming back from the Intent (DetailActivity)
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 		Log.i(TAG, "onActivityResult()");
 
@@ -355,11 +335,10 @@ public class MainActivity extends Activity {
 		String quakeTitle = "";
 		String starRating = "";
 
-		// extra info from intent
+		// extra info from the intent
 
 		Log.i(TAG, "I have extras");
-		// get extras from intent
-		// stars given with a default of 0
+		
 		Float starFloat = data.getFloatExtra("stars", 0);
 		quakeTitle = data.getStringExtra("title");
 		starRating = Float.toString(starFloat);
@@ -374,6 +353,7 @@ public class MainActivity extends Activity {
 
 	}
 
+	// If there is a saved Instance
 	@Override
 	protected void onSaveInstanceState(Bundle outState) {
 
