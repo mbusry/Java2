@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/scrollView1"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content" >
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical" >
+
+        <TextView
+            android:id="@+id/detail_title"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_horizontal"
+            android:maxLines="2"
+            android:padding="5dp"
+            android:text="@string/detail_title"
+            android:textAlignment="center"
+            android:textColor="#348b96"
+            android:textSize="22sp"
+            android:textStyle="bold" />
+
+        <RatingBar
+            android:id="@+id/detail_rating"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:numStars="5"
+            android:stepSize="1.0" />
+
+        <TextView
+            android:id="@+id/detail_link"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:padding="5dp"
+            android:text="@string/detail_link"
+            android:textAlignment="center"
+            android:textColor="#333333"
+            android:textSize="16sp"
+            android:textStyle="italic" />
+
+        <TextView
+            android:id="@+id/detail_north"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:padding="5dp"
+            android:text="@string/detail_north"
+            android:textAlignment="center"
+            android:textColor="#333333"
+            android:textSize="16sp"
+            android:textStyle="normal" />
+
+        <TextView
+            android:id="@+id/detail_west"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:padding="5dp"
+            android:text="@string/detail_west"
+            android:textAlignment="center"
+            android:textColor="#333333"
+            android:textSize="16sp"
+            android:textStyle="normal" />
+
+        <TextView
+            android:id="@+id/detail_lat"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:padding="5dp"
+            android:text="@string/detail_lat"
+            android:textAlignment="center"
+            android:textColor="#333333"
+            android:textSize="16sp"
+            android:textStyle="normal" />
+
+        <TextView
+            android:id="@+id/detail_lng"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:padding="5dp"
+            android:text="@string/detail_lng"
+            android:textAlignment="center"
+            android:textColor="#333333"
+            android:textSize="16sp"
+            android:textStyle="normal" />
+        
+                <TextView
+            android:id="@+id/detail_depth"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:padding="5dp"
+            android:text="@string/detail_lng"
+            android:textAlignment="center"
+            android:textColor="#333333"
+            android:textSize="16sp"
+            android:textStyle="normal" />
+                
+                        <TextView
+            android:id="@+id/detail_mag"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:padding="5dp"
+            android:text="@string/detail_lng"
+            android:textAlignment="center"
+            android:textColor="#333333"
+            android:textSize="16sp"
+            android:textStyle="normal" />
+                
+        
+
+        <TextView
+            android:id="@+id/detail_time"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:padding="5dp"
+            android:text="@string/detail_time"
+            android:textAlignment="center"
+            android:textColor="#333333"
+            android:textSize="16sp"
+            android:textStyle="normal" />
+
+        <Button
+            android:id="@+id/detail_link_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:background="#348b96"
+            android:onClick="onClick"
+            android:padding="10dp"
+            android:text="@string/detail_link_button"
+            android:textColor="#FFFFFF" />
+    </LinearLayout>
+
+</ScrollView>
