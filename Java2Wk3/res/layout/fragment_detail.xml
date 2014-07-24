@@ -5,8 +5,8 @@
     android:orientation="vertical" >
 
     <fragment
-        android:id="@+id/fragment_main"
-        android:name="com.michaelusry.java2wk3.MainFragment"
+        android:id="@+id/fragment_detail"
+        android:name="com.michaelusry.java2wk3.DetailsFragment"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 

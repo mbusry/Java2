@@ -1,5 +1,5 @@
 /** Automatically generated file. DO NOT MODIFY */
-package com.michaelusry.java2wk2;
+package com.michaelusry.java2wk3;
 
 public final class BuildConfig {
     public final static boolean DEBUG = true;

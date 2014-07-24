@@ -1,4 +1,4 @@
-package com.michaelusry.java2wk2;
+package com.michaelusry.java2wk3;
 
 import java.io.BufferedInputStream;
 import java.io.IOException;

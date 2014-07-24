@@ -1,11 +1,11 @@
 /*
- * Project		Java2Wk2
+ * Project		Java2Wk3
  * 
- * package		com.michaelusry.java2wk2
+ * package		com.michaelusry.java2wk3
  * 
  * @author		Michael Usry
  * 
- * date			Jul 8, 2014
+ * date			Jul 24, 2014
  * 
  * purpose: This will access a json list of the last 50 quakes recorded.  The app checks
  * for network connection.  If there is no connection it will check to see if there is a local
@@ -15,7 +15,7 @@
  * rating.  A saved state allows info to be passed back to the main activity	
  * 
  */
-package com.michaelusry.java2wk2;
+package com.michaelusry.java2wk3;
 
 import java.io.File;
 import java.io.Serializable;
@@ -27,40 +27,46 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import com.michaelusry.java2wk2.R;
+import com.michaelusry.java2wk3.R;
 import com.michaelusry.javaWk4.ConnectionStatus;
 
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.app.AlertDialog.Builder;
 import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.os.Messenger;
 import android.util.Log;
-import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
-import android.widget.SimpleAdapter;
 
-public class MainActivity extends Activity {
+public class MainActivity extends Activity implements
+		MainFragment.listItemSelected {
 
 	static String TAG = MainActivity.class.getSimpleName();
 	static ListView list;
 	static MyService collector;
 	static FileManager fileManager;
+	static MainFragment MainFrag;
 
 	static Context m_context;
 	static String filename = "quake_json.txt";
 
 	final MyHandler myHandler = new MyHandler(this);
+
+	String thisTitle = null;
+	String thisLink = null;
+	String thisNorth = null;
+	String thisWest = null;
+	String thisLat = null;
+	String thisLng = null;
+	String thisDepth = null;
+	String thisMag = null;
+	String thisTime = null;
+
 	ConnectionStatus cs = new ConnectionStatus();
 
 	static JSONArray dataArray = null;
@@ -71,41 +77,54 @@ public class MainActivity extends Activity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
-		setContentView(R.layout.activity_main);
+		setContentView(R.layout.fragment_main);
 
 		m_context = this;
 		fileManager = FileManager.getInstance();
+		MainFrag = (MainFragment) getFragmentManager().findFragmentById(
+				R.id.fragment_main);
 
-		// find the list by ID
-		list = (ListView) findViewById(R.id.list);
-
-		// inflate the custom list header
-		View customHeader = this.getLayoutInflater().inflate(
-				R.layout.list_header, null);
-		// add the header to the custom list
-		list.addHeaderView(customHeader);
-
+		/*
+		 * // find the list by ID list = (ListView) findViewById(R.id.list);
+		 * 
+		 * // inflate the custom list header View customHeader =
+		 * this.getLayoutInflater().inflate( R.layout.list_header, null); // add
+		 * the header to the custom list list.addHeaderView(customHeader);
+		 */
 		// checking for a saved instance
 		if (savedInstanceState != null) {
 			Log.i(TAG, "Restoring state");
 
 			savedInstanceState.getSerializable("saved");
-			
+
 			if (arrayList != null) {
 				Log.i(TAG, "arrayList != null(savedInstance");
 				System.out.println("savedInstance:arrayList = " + arrayList);
-				
-				SimpleAdapter adapter = new SimpleAdapter(m_context, arrayList,
-						R.layout.list_row, new String[] { "title", "mag",
-								"depth" }, new int[] { R.id.title, R.id.mag,
-								R.id.depth });
 
-				list.setAdapter(adapter);
+				MainFrag.updateList(arrayList);
+
+				/*
+				 * - moved to MainFragment.updateList SimpleAdapter adapter =
+				 * new SimpleAdapter(m_context, arrayList, R.layout.list_row,
+				 * new String[] { "title", "mag", "depth" }, new int[] {
+				 * R.id.title, R.id.mag, R.id.depth });
+				 * 
+				 * list.setAdapter(adapter);
+				 */
 			}
 
 		} else {
 			// check connection status
 			if (cs.isOnline(m_context)) {
+				// checking to see if the file is saved locally, if not get it.
+				File fileCheck = getBaseContext().getFileStreamPath(filename);
+				if (fileCheck.exists()) {
+					System.out.println("going to parseJSONToList()");
+					parseJSONToList();
+				} else {
+					// System.out.println("no file here run getData()");
+					getData();
+				}
 
 			} else {
 
@@ -132,92 +151,9 @@ public class MainActivity extends Activity {
 				}
 			}
 
-			//checking to see if the file is saved locally, if not get it.
-			File fileCheck = getBaseContext().getFileStreamPath(filename);
-			if (fileCheck.exists()) {
-				System.out.println("going to parseJSONToList()");
-				parseJSONToList();
-			} else {
-				// System.out.println("no file here run getData()");
-				getData();
-			}
 		}
-		
-		list.setOnItemClickListener(new OnItemClickListener() {
-			
-			// when you click the list send to the DetailActivity
-			@Override
-			public void onItemClick(AdapterView<?> arg0, View arg1, int arg2,
-					long arg3) {
-				// TODO Auto-generated method stub
-				System.out.println("detailActivity:onClick");
-				System.out.println("arrayList arg2: " + (arg2));
-				System.out.println("arrayList: " + arrayList);
 
-				Intent detailActivity = new Intent(getBaseContext(),
-						DetailActivity.class);
-
-				// Add array info to send to detailActivity
-
-
-				try {
-					String thisTitle = ((JSONObject) dataArray.get(arg2))
-							.getString("title");
-					String thisLink = ((JSONObject) dataArray.get(arg2))
-							.getString("link");
-
-					String thisNorth = ((JSONObject) dataArray.get(arg2))
-							.getString("north");
-
-					String thisWest = ((JSONObject) dataArray.get(arg2))
-							.getString("west");
-
-					String thisLat = ((JSONObject) dataArray.get(arg2))
-							.getString("lat");
-
-					String thisLng = ((JSONObject) dataArray.get(arg2))
-							.getString("lng");
-
-					String thisDepth = ((JSONObject) dataArray.get(arg2))
-							.getString("depth");
-
-					String thisMag = ((JSONObject) dataArray.get(arg2))
-							.getString("mag");
-
-					String thisTime = ((JSONObject) dataArray.get(arg2))
-							.getString("time");
-					
-					//info to send to the Intent
-					detailActivity.putExtra("title", thisTitle);
-					detailActivity.putExtra("link", thisLink);
-					detailActivity.putExtra("north", thisNorth);
-					detailActivity.putExtra("west", thisWest);
-					detailActivity.putExtra("lat", thisLat);
-					detailActivity.putExtra("lng", thisLng);
-					detailActivity.putExtra("depth", thisDepth);
-					detailActivity.putExtra("mag", thisMag);
-					detailActivity.putExtra("time", thisTime);
-
-					//start the activity
-					startActivityForResult(detailActivity, 0);
-
-				} catch (JSONException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-
-			}
-		});
 	}
-
-	@Override
-	public boolean onCreateOptionsMenu(Menu menu) {
-
-		// Inflate the menu; this adds items to the action bar if it is present.
-		getMenuInflater().inflate(R.menu.main, menu);
-		return true;
-	}
-
 
 	private static class MyHandler extends Handler {
 
@@ -277,22 +213,22 @@ public class MainActivity extends Activity {
 		String mag = null;
 		JSONObject quakeObject = null;
 
-
 		String dataString = FileManager.readFromFile(m_context, filename);
-		System.out.println("dataString: " + dataString);
+		// System.out.println("dataString: " + dataString);
 
 		try {
 
 			dataArray = new JSONArray(dataString);
-			System.out.println("dataArray(JSON): " + dataArray);
+			// System.out.println("dataArray(JSON): " + dataArray);
 
 		} catch (JSONException e) {
 			e.printStackTrace();
 		}
 
 		for (int i = 1; i < dataArray.length(); i++) {
-			 System.out.println("dataArray(JSON): " + dataArray);
-			 System.out.println("dataArray(JSON).length: " + dataArray.length());
+			// System.out.println("dataArray(JSON): " + dataArray);
+			// System.out.println("dataArray(JSON).length: " +
+			// dataArray.length());
 
 			try {
 				quakeObject = (JSONObject) dataArray.get(i);
@@ -314,19 +250,15 @@ public class MainActivity extends Activity {
 			quakeList.put("mag", mag);
 
 			arrayList.add(quakeList);
-			System.out.println("parsing JSON: arrayList = " + arrayList);
+			System.out.println("parsing JSON: arrayList");
 
 		}
-
-		SimpleAdapter adapter = new SimpleAdapter(m_context, arrayList,
-				R.layout.list_row, new String[] { "title", "depth", "mag" },
-				new int[] { R.id.title, R.id.depth, R.id.mag });
-
-		list.setAdapter(adapter);
-
+		// call the MainFrag to display the arrayList just created
+		System.out.println("HEADED INTO MAINFRAG.UPATELIST");
+		MainFrag.updateList(arrayList);
 	}
 
-	//The result when coming back from the Intent (DetailActivity)
+	// The result when coming back from the Intent (DetailActivity)
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 		Log.i(TAG, "onActivityResult()");
 
@@ -337,7 +269,7 @@ public class MainActivity extends Activity {
 		// extra info from the intent
 
 		Log.i(TAG, "I have extras");
-		
+
 		Float starFloat = data.getFloatExtra("stars", 0);
 		quakeTitle = data.getStringExtra("title");
 		starRating = Float.toString(starFloat);
@@ -357,7 +289,7 @@ public class MainActivity extends Activity {
 	protected void onSaveInstanceState(Bundle outState) {
 
 		super.onSaveInstanceState(outState);
-		System.out.println("onSaveInstanceState/arrayList: " + arrayList);
+		System.out.println("onSaveInstanceState/arrayList: ");
 
 		// check that the array is not null and not empty. then save the array
 		// to the bundle
@@ -367,4 +299,88 @@ public class MainActivity extends Activity {
 		}
 
 	}
+
+	//
+
+	public void passDataPort(int arg2) {
+		
+		Intent detailActivity = new Intent(getBaseContext(),
+				DetailActivity.class);
+
+		// Add array info to send to detailActivity
+
+		try {
+			thisTitle = ((JSONObject) dataArray.get(arg2)).getString("title");
+			thisLink = ((JSONObject) dataArray.get(arg2)).getString("link");
+
+			thisNorth = ((JSONObject) dataArray.get(arg2)).getString("north");
+
+			thisWest = ((JSONObject) dataArray.get(arg2)).getString("west");
+
+			thisLat = ((JSONObject) dataArray.get(arg2)).getString("lat");
+
+			thisLng = ((JSONObject) dataArray.get(arg2)).getString("lng");
+
+			thisDepth = ((JSONObject) dataArray.get(arg2)).getString("depth");
+
+			thisMag = ((JSONObject) dataArray.get(arg2)).getString("mag");
+
+			thisTime = ((JSONObject) dataArray.get(arg2)).getString("time");
+
+			// info to send to the Intent
+			detailActivity.putExtra("title", thisTitle);
+			detailActivity.putExtra("link", thisLink);
+			detailActivity.putExtra("north", thisNorth);
+			detailActivity.putExtra("west", thisWest);
+			detailActivity.putExtra("lat", thisLat);
+			detailActivity.putExtra("lng", thisLng);
+			detailActivity.putExtra("depth", thisDepth);
+			detailActivity.putExtra("mag", thisMag);
+			detailActivity.putExtra("time", thisTime);
+
+			// start the activity
+			startActivityForResult(detailActivity, 0);
+
+		} catch (JSONException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+
+	@Override
+	public void passData(int arg2) {
+		// TODO Auto-generated method stub
+		
+		System.out.println("passDate.arg2 = " + arg2);
+
+
+		DetailsFragment dFrag = (DetailsFragment) getFragmentManager()
+				.findFragmentById(R.id.fragment_detail);
+
+		// if dFrag !=null and isInLayout call dFrag and pass strings
+
+		if (dFrag != null && dFrag.isInLayout()) {
+			System.out.println("dFrag.isInLayout");
+			
+			dFrag.updateView(thisTitle, thisLink, thisNorth, thisWest, thisLat, thisLng,
+					thisDepth, thisMag, thisTime);
+		} else {
+			passDataPort(arg2);
+		}
+
+	}
+
+	// clicking the button goes to the web site
+	public void onClick(View view) {
+
+		Log.i(TAG, "intent: Launch web browser");
+
+		Uri uriFromString = Uri.parse(thisLink);
+
+		Intent launchWeb = new Intent(Intent.ACTION_VIEW, uriFromString);
+
+		startActivity(launchWeb);
+
+	}
+
 }

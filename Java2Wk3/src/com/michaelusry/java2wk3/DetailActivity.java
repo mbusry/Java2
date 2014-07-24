@@ -1,13 +1,15 @@
-package com.michaelusry.java2wk2;
+package com.michaelusry.java2wk3;
+
+import com.michaelusry.java2wk3.R;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.RatingBar;
-import android.widget.TextView;
 
 public class DetailActivity extends Activity{
 
@@ -23,38 +25,28 @@ public class DetailActivity extends Activity{
 	String detail_mag = null;
 	String detail_time = null;
 	RatingBar starRating;
-	TextView title;
-	TextView link;
-	TextView north;
-	TextView west;
-	TextView lat;
-	TextView lng;
-	TextView depth;
-	TextView mag;
-	TextView time;
 
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState){
-		
+		System.out.println("DETAILACTIVITY.onCreate");
+
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.detail_activity);
+		setContentView(R.layout.fragment_detail);
 		
-		System.out.println("detail_activity started");
 		Log.i(TAG, "onCreate() Started");
 		
-		//text views
-		title = (TextView)findViewById(R.id.detail_title);		
-		link = (TextView)findViewById(R.id.detail_link);		
-		north = (TextView)findViewById(R.id.detail_north);		
-		west = (TextView)findViewById(R.id.detail_west);		
-		lat = (TextView)findViewById(R.id.detail_lat);		
-		lng = (TextView)findViewById(R.id.detail_lng);		
-		depth = (TextView)findViewById(R.id.detail_depth);		
-		mag = (TextView)findViewById(R.id.detail_mag);		
-		time = (TextView)findViewById(R.id.detail_time);
+		//if landscape then finish();
+		if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE){
+			Log.i(TAG, "I'm in LANDSCAPE MODE");
+			System.out.println("DETAILACTIVITY.orientation");
+
+			finish();
+			return;
+		}
 		
-		// launch intent,  get extras from intent
+		
+		// get launch intent,  get extras from intent
 		
 		Intent mainIntent = getIntent();
 		mainIntent.getExtras();
@@ -70,6 +62,14 @@ public class DetailActivity extends Activity{
 		detail_mag = mainIntent.getStringExtra("mag");
 		detail_time = mainIntent.getStringExtra("time");
 		
+		// grab fragment_detail and call method to update the view.
+		
+		DetailsFragment dfrag = (DetailsFragment) getFragmentManager().findFragmentById(R.id.fragment_detail);
+		
+		dfrag.updateView(detail_title, detail_link, detail_north, detail_west, detail_lat, detail_lng, detail_depth, detail_mag, detail_time);
+		
+		/* MOVED TO DetailFragment
+		 * 
 		// set the text of views
 		title.setText(detail_title);
 		link.setText("URL: " + detail_link);
@@ -81,12 +81,15 @@ public class DetailActivity extends Activity{
 		mag.setText("Magnitude: " + detail_mag);
 		time.setText("Time: " + detail_time);
 
+*/
 
 	}
 		
 	//clicking the button goes to the web site
 	public void onClick(View view){
 		
+		System.out.println("DETAILACTIVITY.onClick");
+
 		Log.i(TAG,"intent: Launch web browser");
 		
 		Uri uriFromString = Uri.parse(detail_link);
@@ -100,6 +103,8 @@ public class DetailActivity extends Activity{
 	//when the intent finishes send the info back to the MainActivity
 	@Override
 	public void finish() {
+		System.out.println("DETAILACTIVITY.finish");
+
 
 		Intent data = new Intent(getBaseContext(),MainActivity.class);
 		
