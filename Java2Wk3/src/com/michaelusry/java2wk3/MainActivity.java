@@ -76,6 +76,8 @@ public class MainActivity extends Activity implements
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		
+		System.out.println("MAINACTIVITY.onCreate");
 
 		setContentView(R.layout.fragment_main);
 
@@ -93,13 +95,17 @@ public class MainActivity extends Activity implements
 		 */
 		// checking for a saved instance
 		if (savedInstanceState != null) {
+			System.out.println("MAINACTIVITY.savedInstanceState !=null");
+
 			Log.i(TAG, "Restoring state");
 
 			savedInstanceState.getSerializable("saved");
 
 			if (arrayList != null) {
+				System.out.println("MAINACTIVITY.arrayList !=null");
+
 				Log.i(TAG, "arrayList != null(savedInstance");
-				System.out.println("savedInstance:arrayList = " + arrayList);
+				System.out.println("Going into MAINFRAG from  = MAINACTIVITY.arrayList !=null");
 
 				MainFrag.updateList(arrayList);
 
@@ -117,12 +123,16 @@ public class MainActivity extends Activity implements
 			// check connection status
 			if (cs.isOnline(m_context)) {
 				// checking to see if the file is saved locally, if not get it.
+				System.out.println("MAINACTIVITY.cs.isOnline");
+
 				File fileCheck = getBaseContext().getFileStreamPath(filename);
 				if (fileCheck.exists()) {
-					System.out.println("going to parseJSONToList()");
+					System.out.println("MAINACTIVITY.fileCheck.exists");
+
+					System.out.println("going to parse,ToList()");
 					parseJSONToList();
 				} else {
-					// System.out.println("no file here run getData()");
+					System.out.println("no file here run getData()");
 					getData();
 				}
 
@@ -250,7 +260,7 @@ public class MainActivity extends Activity implements
 			quakeList.put("mag", mag);
 
 			arrayList.add(quakeList);
-			System.out.println("parsing JSON: arrayList");
+//			System.out.println("parsing JSON: arrayList");
 
 		}
 		// call the MainFrag to display the arrayList just created
@@ -304,7 +314,10 @@ public class MainActivity extends Activity implements
 
 	public void passDataPort(int arg2) {
 		
-		Intent detailActivity = new Intent(getBaseContext(),
+		System.out.println("passDataPort");
+
+		
+		Intent detailActivity = new Intent(m_context,
 				DetailActivity.class);
 
 		// Add array info to send to detailActivity
@@ -351,7 +364,7 @@ public class MainActivity extends Activity implements
 	public void passData(int arg2) {
 		// TODO Auto-generated method stub
 		
-		System.out.println("passDate.arg2 = " + arg2);
+		System.out.println("passData.arg2 = " + arg2);
 
 
 		DetailsFragment dFrag = (DetailsFragment) getFragmentManager()
@@ -361,10 +374,34 @@ public class MainActivity extends Activity implements
 
 		if (dFrag != null && dFrag.isInLayout()) {
 			System.out.println("dFrag.isInLayout");
+			try {
+				thisTitle = ((JSONObject) dataArray.get(arg2)).getString("title");
+				thisLink = ((JSONObject) dataArray.get(arg2)).getString("link");
+
+				thisNorth = ((JSONObject) dataArray.get(arg2)).getString("north");
+
+				thisWest = ((JSONObject) dataArray.get(arg2)).getString("west");
+
+				thisLat = ((JSONObject) dataArray.get(arg2)).getString("lat");
+
+				thisLng = ((JSONObject) dataArray.get(arg2)).getString("lng");
+
+				thisDepth = ((JSONObject) dataArray.get(arg2)).getString("depth");
+
+				thisMag = ((JSONObject) dataArray.get(arg2)).getString("mag");
+
+				thisTime = ((JSONObject) dataArray.get(arg2)).getString("time");
+
+			} catch (JSONException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+
 			
 			dFrag.updateView(thisTitle, thisLink, thisNorth, thisWest, thisLat, thisLng,
 					thisDepth, thisMag, thisTime);
 		} else {
+			System.out.println("go to ->passDataPort");
 			passDataPort(arg2);
 		}
 

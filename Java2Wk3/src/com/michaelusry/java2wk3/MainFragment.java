@@ -19,7 +19,6 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
-import android.widget.TextView;
 import android.widget.AdapterView.OnItemClickListener;
 
 /**
@@ -33,7 +32,6 @@ public class MainFragment extends Fragment{
 	static ArrayList<HashMap<String, String>> arrayList = new ArrayList<HashMap<String, String>>();
 	static Context m_context;
 	public static SimpleAdapter adapter;
-	static TextView emptyList;
 
 
 	// interface
@@ -97,7 +95,7 @@ public class MainFragment extends Fragment{
 					long arg3) {
 				// TODO Auto-generated method stub
 				System.out.println("MainFragment.onItemClick");
-				// System.out.println("arrayList arg2: " + (arg2));
+				 System.out.println("arrayList arg2: " + (arg2));
 				// System.out.println("arrayList: " + arrayList);
 				
 				parent.passData(arg2);
@@ -105,10 +103,7 @@ public class MainFragment extends Fragment{
 			}
 		});
 
-		
-		
 		return view;
-		
 		
 	}
 	

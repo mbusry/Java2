@@ -33,7 +33,8 @@ public class DetailActivity extends Activity{
 
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.fragment_detail);
-		
+		System.out.println("DETAILACTIVITY.onCreate.set fragment_detail");
+
 		Log.i(TAG, "onCreate() Started");
 		
 		//if landscape then finish();
@@ -61,6 +62,8 @@ public class DetailActivity extends Activity{
 		detail_depth = mainIntent.getStringExtra("depth");
 		detail_mag = mainIntent.getStringExtra("mag");
 		detail_time = mainIntent.getStringExtra("time");
+		
+		System.out.println("getStringExtra: " + detail_title + " " + detail_link);
 		
 		// grab fragment_detail and call method to update the view.
 		
