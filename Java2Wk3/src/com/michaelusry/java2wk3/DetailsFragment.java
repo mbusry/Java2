@@ -15,10 +15,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-/**
- * @author michael
- * 
- */
 public class DetailsFragment extends Fragment{
 	
 	// variables
@@ -43,9 +39,6 @@ public class DetailsFragment extends Fragment{
 		super.onAttach(activity);
 	}
 
-	/* (non-Javadoc)
-	 * @see android.app.Fragment#onCreateView(android.view.LayoutInflater, android.view.ViewGroup, android.os.Bundle)
-	 */
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {

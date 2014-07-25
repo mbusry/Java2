@@ -12,7 +12,10 @@
  * file and display it as well as an alert.  If there is a connection the data is saved to a
  * file and then displayed on the screen.  When you select a list of quakes another activity is
  * displayed showing more information, the ability to launch a web browser and assign a star
- * rating.  A saved state allows info to be passed back to the main activity	
+ * rating.  A saved state allows info to be passed back to the main activity.
+ * 
+ * Week 3 addition: fragments.  If the device is rotated to landscape then the main and detail
+ * fragments are displayed side by side. 	
  * 
  */
 package com.michaelusry.java2wk3;
@@ -76,7 +79,7 @@ public class MainActivity extends Activity implements
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		
+
 		System.out.println("MAINACTIVITY.onCreate");
 
 		setContentView(R.layout.fragment_main);
@@ -105,7 +108,8 @@ public class MainActivity extends Activity implements
 				System.out.println("MAINACTIVITY.arrayList !=null");
 
 				Log.i(TAG, "arrayList != null(savedInstance");
-				System.out.println("Going into MAINFRAG from  = MAINACTIVITY.arrayList !=null");
+				System.out
+						.println("Going into MAINFRAG from  = MAINACTIVITY.arrayList !=null");
 
 				MainFrag.updateList(arrayList);
 
@@ -137,7 +141,7 @@ public class MainActivity extends Activity implements
 				}
 
 			} else {
-
+				// no internet connection
 				File fileCheck = getBaseContext().getFileStreamPath(filename);
 				if (fileCheck.exists()) {
 					// if the user is not connected let them know it is required
@@ -154,7 +158,7 @@ public class MainActivity extends Activity implements
 					// if the user is not connected let them know it is required
 					AlertDialog.Builder alert = new AlertDialog.Builder(this);
 					alert.setTitle(
-							"An internet connection is required. I have no local file.")
+							"An internet connection is required and I have no local file.")
 							.setPositiveButton("ok", null);
 					alert.show();
 					return;
@@ -260,7 +264,7 @@ public class MainActivity extends Activity implements
 			quakeList.put("mag", mag);
 
 			arrayList.add(quakeList);
-//			System.out.println("parsing JSON: arrayList");
+			// System.out.println("parsing JSON: arrayList");
 
 		}
 		// call the MainFrag to display the arrayList just created
@@ -310,15 +314,13 @@ public class MainActivity extends Activity implements
 
 	}
 
-	//
+	// this is used to display the data if the device is in portrait mode.
 
 	public void passDataPort(int arg2) {
-		
+
 		System.out.println("passDataPort");
 
-		
-		Intent detailActivity = new Intent(m_context,
-				DetailActivity.class);
+		Intent detailActivity = new Intent(m_context, DetailActivity.class);
 
 		// Add array info to send to detailActivity
 
@@ -360,12 +362,12 @@ public class MainActivity extends Activity implements
 		}
 	}
 
+	// used if the device is in landscape mode
 	@Override
 	public void passData(int arg2) {
 		// TODO Auto-generated method stub
-		
-		System.out.println("passData.arg2 = " + arg2);
 
+		System.out.println("passData.arg2 = " + arg2);
 
 		DetailsFragment dFrag = (DetailsFragment) getFragmentManager()
 				.findFragmentById(R.id.fragment_detail);
@@ -375,10 +377,12 @@ public class MainActivity extends Activity implements
 		if (dFrag != null && dFrag.isInLayout()) {
 			System.out.println("dFrag.isInLayout");
 			try {
-				thisTitle = ((JSONObject) dataArray.get(arg2)).getString("title");
+				thisTitle = ((JSONObject) dataArray.get(arg2))
+						.getString("title");
 				thisLink = ((JSONObject) dataArray.get(arg2)).getString("link");
 
-				thisNorth = ((JSONObject) dataArray.get(arg2)).getString("north");
+				thisNorth = ((JSONObject) dataArray.get(arg2))
+						.getString("north");
 
 				thisWest = ((JSONObject) dataArray.get(arg2)).getString("west");
 
@@ -386,7 +390,8 @@ public class MainActivity extends Activity implements
 
 				thisLng = ((JSONObject) dataArray.get(arg2)).getString("lng");
 
-				thisDepth = ((JSONObject) dataArray.get(arg2)).getString("depth");
+				thisDepth = ((JSONObject) dataArray.get(arg2))
+						.getString("depth");
 
 				thisMag = ((JSONObject) dataArray.get(arg2)).getString("mag");
 
@@ -397,9 +402,8 @@ public class MainActivity extends Activity implements
 				e.printStackTrace();
 			}
 
-			
-			dFrag.updateView(thisTitle, thisLink, thisNorth, thisWest, thisLat, thisLng,
-					thisDepth, thisMag, thisTime);
+			dFrag.updateView(thisTitle, thisLink, thisNorth, thisWest, thisLat,
+					thisLng, thisDepth, thisMag, thisTime);
 		} else {
 			System.out.println("go to ->passDataPort");
 			passDataPort(arg2);
