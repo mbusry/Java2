@@ -35,16 +35,26 @@ import com.michaelusry.javaWk4.ConnectionStatus;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.Dialog;
+import android.app.DialogFragment;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.os.Messenger;
+import android.preference.PreferenceManager;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.TextView;
 
 public class MainActivity extends Activity implements
 		MainFragment.listItemSelected {
@@ -54,9 +64,13 @@ public class MainActivity extends Activity implements
 	static MyService collector;
 	static FileManager fileManager;
 	static MainFragment MainFrag;
+	static EditText searchEditText;
+	static EditText nameEditText;
+	static TextView nameTextView;
 
 	static Context m_context;
 	static String filename = "quake_json.txt";
+	static String userNameString;
 
 	final MyHandler myHandler = new MyHandler(this);
 
@@ -75,6 +89,16 @@ public class MainActivity extends Activity implements
 	static JSONArray dataArray = null;
 
 	static ArrayList<HashMap<String, String>> arrayList = new ArrayList<HashMap<String, String>>();
+	static ArrayList<HashMap<String, String>> favoritesArray = new ArrayList<HashMap<String, String>>();
+
+	static SharedPreferences preferences;
+	static SharedPreferences.Editor edit;
+
+	public enum dialogType {
+		SEARCH, FAVS, PREFS
+	};
+
+	public static dialogType type;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -89,13 +113,25 @@ public class MainActivity extends Activity implements
 		MainFrag = (MainFragment) getFragmentManager().findFragmentById(
 				R.id.fragment_main);
 
-		/*
-		 * // find the list by ID list = (ListView) findViewById(R.id.list);
-		 * 
-		 * // inflate the custom list header View customHeader =
-		 * this.getLayoutInflater().inflate( R.layout.list_header, null); // add
-		 * the header to the custom list list.addHeaderView(customHeader);
-		 */
+		// elements from fragments
+		searchEditText = (EditText) findViewById(R.id.fragment_search);
+		nameEditText = (EditText) findViewById(R.id.preferences_dialog);
+		nameTextView = (TextView) findViewById(R.id.userName);
+
+		// shared preferences
+		preferences = PreferenceManager.getDefaultSharedPreferences(m_context);
+
+		edit = preferences.edit();
+
+		// check if name string is empty
+		if (preferences.getString("name", "").toString().isEmpty()) {
+			edit.putString("name", "Welcome Guest");
+			edit.apply();
+		}
+
+		// change the name from the saved preferences
+		nameTextView.setText(preferences.getString("name", "").toString());
+
 		// checking for a saved instance
 		if (savedInstanceState != null) {
 			System.out.println("MAINACTIVITY.savedInstanceState !=null");
@@ -223,8 +259,6 @@ public class MainActivity extends Activity implements
 		System.out.println("parseJSONToList");
 		// vars
 		String title = null;
-		String depth = null;
-		String mag = null;
 		JSONObject quakeObject = null;
 
 		String dataString = FileManager.readFromFile(m_context, filename);
@@ -249,10 +283,6 @@ public class MainActivity extends Activity implements
 
 				title = quakeObject.getString("title");
 
-				mag = quakeObject.getString("mag");
-
-				depth = quakeObject.getString("depth");
-
 			} catch (JSONException e) {
 				e.printStackTrace();
 			}
@@ -260,8 +290,6 @@ public class MainActivity extends Activity implements
 			HashMap<String, String> quakeList = new HashMap<String, String>();
 
 			quakeList.put("title", title);
-			quakeList.put("depth", depth);
-			quakeList.put("mag", mag);
 
 			arrayList.add(quakeList);
 			// System.out.println("parsing JSON: arrayList");
@@ -422,6 +450,177 @@ public class MainActivity extends Activity implements
 
 		startActivity(launchWeb);
 
+	}
+
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+
+		switch (item.getItemId()) {
+
+		case R.id.action_search:
+			// call method
+			launchDialogFragment(dialogType.SEARCH);
+			return true;
+
+		case R.id.action_favorites:
+
+			actionFavorites();
+
+			return true;
+
+		case R.id.action_preference:
+
+			launchDialogFragment(dialogType.PREFS);
+			return true;
+
+		default:
+			return super.onOptionsItemSelected(item);
+
+		}
+	}
+
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+
+		MenuInflater inflater = getMenuInflater();
+		inflater.inflate(R.menu.main, menu);
+
+		return super.onCreateOptionsMenu(menu);
+	}
+
+	public void actionFavorites() {
+		Intent favoriteActivity = new Intent(m_context, FavoritesActivity.class);
+		startActivity(favoriteActivity);
+	}
+
+	public static class AlertDialogFragment extends DialogFragment {
+
+		@Override
+		public Dialog onCreateDialog(Bundle savedInstanceState) {
+
+			// Set a view to get the search dialog edit text
+			View searchView = getActivity().getLayoutInflater().inflate(
+					R.layout.fragment_search, null);
+			// Set a view to get the preferences dialog edit text
+			View prefsView = getActivity().getLayoutInflater().inflate(
+					R.layout.fragment_preferences, null);
+
+			// Target the edit text elements
+			final EditText searchText = (EditText) searchView
+					.findViewById(R.id.fragment_search);
+			final EditText nameEditText = (EditText) prefsView
+					.findViewById(R.id.preferences_dialog);
+
+			// Create an instance of the AlertDialog.Builder
+			AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(
+					getActivity());
+			// LayoutInflater inflator = getActivity().getLayoutInflater();
+
+			switch (type) {
+			case SEARCH:
+				Log.i(TAG, "Launch Search Dialog");
+
+				// Set the view, the title and the positive and negative buttons
+				dialogBuilder
+						.setView(searchView)
+						.setTitle("Search Results")
+						.setPositiveButton("Search",
+								new DialogInterface.OnClickListener() {
+
+									// Positive button onClick method
+									@Override
+									public void onClick(DialogInterface dialog,
+											int which) {
+										// Get the users input text
+										String searchQuery = searchText
+												.getText().toString();
+
+										// If the text is not empty apply a
+										// filter to the list adapter based on
+										// that string
+										if (searchQuery != "") {
+											MainFragment.adapter.getFilter()
+													.filter(searchQuery);
+										}
+
+									}
+								})
+						.setNegativeButton("Cancel",
+								new DialogInterface.OnClickListener() {
+
+									// Negative button onClick method
+									@Override
+									public void onClick(DialogInterface dialog,
+											int which) {
+										AlertDialogFragment.this.getDialog()
+												.cancel();
+									}
+								});
+				break;
+			case FAVS:
+				break;
+			case PREFS:
+				Log.i(TAG, "Launch Prefs Dialog");
+				// Set the view, the title, and the positive and negative
+				// buttons
+				dialogBuilder
+						.setView(prefsView)
+						.setTitle("Enter Username")
+						.setPositiveButton("Save",
+								new DialogInterface.OnClickListener() {
+
+									@Override
+									public void onClick(DialogInterface dialog,
+											int which) {
+										// Get the input form the user
+										userNameString = nameEditText.getText()
+												.toString();
+										Log.i(TAG, "Saving to Shared Prefs");
+
+										if (preferences.getString("name", "")
+												.toString() != null) {
+											// Save the users input to the
+											// shared preferences
+											edit.putString("name", "Welcome "
+													+ userNameString);
+											edit.apply();
+										}
+
+										// Update the text view with the new
+										// Shared Preferences name string
+										nameTextView.setText(preferences
+												.getString("name", "")
+												.toString());
+									}
+
+								})
+						.setNegativeButton("Cancel",
+								new DialogInterface.OnClickListener() {
+
+									@Override
+									public void onClick(DialogInterface dialog,
+											int which) {
+										AlertDialogFragment.this.getDialog()
+												.cancel();
+									}
+								});
+			}
+
+			return dialogBuilder.create();
+			// return super.onCreateDialog(savedInstanceState);
+
+		}
+
+		public static AlertDialogFragment newInstance(dialogType dtype) {
+			type = dtype;
+			return new AlertDialogFragment();
+		}
+
+	}
+
+	public void launchDialogFragment(dialogType type) {
+		AlertDialogFragment dialogFrag = AlertDialogFragment.newInstance(type);
+		dialogFrag.show(getFragmentManager(), "fragment_search");
 	}
 
 }

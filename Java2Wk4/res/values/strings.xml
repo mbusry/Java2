@@ -4,22 +4,22 @@
     <string name="app_name">quakeNN</string>
     <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
-    
-    <string name = "xml_header">Quake List</string>
-    
-    <string name ="detail_mag">Magnitude:</string>
-    <string name ="detail_title">Title:</string>
-    <string name ="detail_north">North:</string>
-    <string name ="detail_west">West:</string>
-    <string name ="detail_lat">Latitude:</string>
-    <string name ="detail_lng">Longitude:</string>
-    <string name ="detail_link">Link:</string>
-    <string name ="detail_time">Time:</string>
-    <string name ="detail_link_button">Get Quake Info:</string>
-    
-    <string name ="preference_hint">User Name:</string>
-    
-   
-    
+    <string name="xml_header">Quake List</string>
+    <string name="detail_mag">Magnitude:</string>
+    <string name="detail_title">Title:</string>
+    <string name="detail_north">North:</string>
+    <string name="detail_west">West:</string>
+    <string name="detail_lat">Latitude:</string>
+    <string name="detail_lng">Longitude:</string>
+    <string name="detail_link">Link:</string>
+    <string name="detail_time">Time:</string>
+    <string name="detail_link_button">Get Quake Info:</string>
+    <string name="preference_hint">User Name:</string>
+    <string name="search_hint">Enter Search:</string>
+    <string name="favorites_title">Favorites</string>
+    <string name="userName">User Name:</string>
+    <string name="action_preference">Preferences</string>
+    <string name="action_search">Search</string>
+    <string name="action_favorites">Favorites</string>
 
 </resources>
