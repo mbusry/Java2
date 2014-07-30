@@ -18,7 +18,7 @@ import android.widget.TextView;
 public class DetailsFragment extends Fragment{
 	
 	// variables
-	static String TAG = "DetailActivity";
+	static String TAG = "DetailsFragment";
 	TextView title;
 	TextView link;
 	TextView north;

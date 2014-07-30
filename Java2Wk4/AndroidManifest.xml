@@ -29,6 +29,11 @@
             android:name="com.michaelusry.java2wk4.DetailActivity"
             android:label="@string/app_name">
          </activity>
+                 <activity
+            android:name="com.michaelusry.java2wk4.FavoritesActivity"
+            android:label="@string/app_name">
+         </activity>
+        
         <service android:name="MyService"></service>
     </application>
 

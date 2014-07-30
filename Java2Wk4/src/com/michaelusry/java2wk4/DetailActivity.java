@@ -71,20 +71,6 @@ public class DetailActivity extends Activity{
 		
 		dfrag.updateView(detail_title, detail_link, detail_north, detail_west, detail_lat, detail_lng, detail_depth, detail_mag, detail_time);
 		
-		/* MOVED TO DetailFragment
-		 * 
-		// set the text of views
-		title.setText(detail_title);
-		link.setText("URL: " + detail_link);
-		north.setText("North: " + detail_north);
-		west.setText("West: " + detail_west);
-		lat.setText("Latitude: " + detail_lat);
-		lng.setText("Longitude: " + detail_lng);
-		depth.setText("Depth: " + detail_depth);
-		mag.setText("Magnitude: " + detail_mag);
-		time.setText("Time: " + detail_time);
-
-*/
 
 	}
 		

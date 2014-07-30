@@ -115,8 +115,7 @@ public class MainFragment extends Fragment{
 		
 		SimpleAdapter adapter = new SimpleAdapter(m_context, arrayList,
 				R.layout.list_row, new String[] { "title", "mag",
-						"depth" }, new int[] { R.id.title, R.id.mag,
-						R.id.depth });
+						"depth" }, new int[] { R.id.title });
 
 		list.setAdapter(adapter);
 

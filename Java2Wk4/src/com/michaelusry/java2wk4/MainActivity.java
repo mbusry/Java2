@@ -149,14 +149,6 @@ public class MainActivity extends Activity implements
 
 				MainFrag.updateList(arrayList);
 
-				/*
-				 * - moved to MainFragment.updateList SimpleAdapter adapter =
-				 * new SimpleAdapter(m_context, arrayList, R.layout.list_row,
-				 * new String[] { "title", "mag", "depth" }, new int[] {
-				 * R.id.title, R.id.mag, R.id.depth });
-				 * 
-				 * list.setAdapter(adapter);
-				 */
 			}
 
 		} else {
@@ -304,24 +296,23 @@ public class MainActivity extends Activity implements
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 		Log.i(TAG, "onActivityResult()");
 
-		// variables
-		String quakeTitle = "";
-		String starRating = "";
 
 		// extra info from the intent
 
 		Log.i(TAG, "I have extras");
 
 		Float starFloat = data.getFloatExtra("stars", 0);
-		quakeTitle = data.getStringExtra("title");
-		starRating = Float.toString(starFloat);
+		String quakeTitle = data.getStringExtra("title");
+		String starRating = Float.toString(starFloat);
+		
+		HashMap<String, String> favoritsList = new HashMap<String, String>();
+		
+		favoritsList.put("title", quakeTitle);
+		favoritsList.put("starRating", starRating);
+		
+		favoritesArray.add(favoritsList);
+		System.out.println("favoritesArray: " + favoritesArray);
 
-		// show AlertDialog
-
-		AlertDialog.Builder alert = new AlertDialog.Builder(this);
-		alert.setTitle(quakeTitle + " now has " + starRating + " stars");
-
-		alert.show();
 		super.onActivityResult(requestCode, resultCode, data);
 
 	}
@@ -490,6 +481,7 @@ public class MainActivity extends Activity implements
 
 	public void actionFavorites() {
 		Intent favoriteActivity = new Intent(m_context, FavoritesActivity.class);
+		System.out.println("going into Favorites");
 		startActivity(favoriteActivity);
 	}
 

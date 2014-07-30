@@ -9,8 +9,8 @@ import android.widget.ListView;
 import android.widget.SimpleAdapter;
 import android.widget.TextView;
 
-public class FavoritesActivity extends Activity{
-	
+public class FavoritesActivity extends Activity {
+
 	// Declare the variables
 	ListView favsList;
 	TextView favTitle;
@@ -34,16 +34,14 @@ public class FavoritesActivity extends Activity{
 
 			// Create a SimpleAdapter to populate the list
 			SimpleAdapter favsAdapter = new SimpleAdapter(this, favsArray,
-					R.layout.list_row, new String[] { "title", "mag",
-							"depth" }, new int[] { R.id.title, R.id.mag,
-							R.id.depth });
+					R.layout.favorites_list,
+					new String[] { "title", "mag", "depth" },
+					new int[] { R.id.stars });
 
 			// set the adapter for the list
 			favsList.setAdapter(favsAdapter);
 		}
 
 	}
-
-	
 
 }
