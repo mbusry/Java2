@@ -296,7 +296,6 @@ public class MainActivity extends Activity implements
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 		Log.i(TAG, "onActivityResult()");
 
-
 		// extra info from the intent
 
 		Log.i(TAG, "I have extras");
@@ -304,12 +303,12 @@ public class MainActivity extends Activity implements
 		Float starFloat = data.getFloatExtra("stars", 0);
 		String quakeTitle = data.getStringExtra("title");
 		String starRating = Float.toString(starFloat);
-		
+
 		HashMap<String, String> favoritsList = new HashMap<String, String>();
-		
+
 		favoritsList.put("title", quakeTitle);
 		favoritsList.put("starRating", starRating);
-		
+
 		favoritesArray.add(favoritsList);
 		System.out.println("favoritesArray: " + favoritesArray);
 
@@ -335,7 +334,7 @@ public class MainActivity extends Activity implements
 
 	// this is used to display the data if the device is in portrait mode.
 
-	public void passDataPort(int arg2) {
+	public void passDataPort(int arg2, String title) {
 
 		System.out.println("passDataPort");
 
@@ -383,10 +382,12 @@ public class MainActivity extends Activity implements
 
 	// used if the device is in landscape mode
 	@Override
-	public void passData(int arg2) {
+	public void passData(int arg2, String title) {
 		// TODO Auto-generated method stub
 
 		System.out.println("passData.arg2 = " + arg2);
+		
+		title = title;
 
 		DetailsFragment dFrag = (DetailsFragment) getFragmentManager()
 				.findFragmentById(R.id.fragment_detail);
@@ -425,7 +426,7 @@ public class MainActivity extends Activity implements
 					thisLng, thisDepth, thisMag, thisTime);
 		} else {
 			System.out.println("go to ->passDataPort");
-			passDataPort(arg2);
+			passDataPort(arg2, title);
 		}
 
 	}
@@ -498,8 +499,10 @@ public class MainActivity extends Activity implements
 					R.layout.fragment_preferences, null);
 
 			// Target the edit text elements
+
 			final EditText searchText = (EditText) searchView
 					.findViewById(R.id.fragment_search);
+
 			final EditText nameEditText = (EditText) prefsView
 					.findViewById(R.id.preferences_dialog);
 
@@ -515,21 +518,25 @@ public class MainActivity extends Activity implements
 				// Set the view, the title and the positive and negative buttons
 				dialogBuilder
 						.setView(searchView)
-						.setTitle("Search Results")
+						.setTitle("Search Words")
 						.setPositiveButton("Search",
 								new DialogInterface.OnClickListener() {
 
 									// Positive button onClick method
+
 									@Override
 									public void onClick(DialogInterface dialog,
 											int which) {
-										// Get the users input text
+										System.out.println("Search CLICK");
+
+										// user input
 										String searchQuery = searchText
 												.getText().toString();
+										System.out.println("searchQuery: "+searchQuery);
 
-										// If the text is not empty apply a
-										// filter to the list adapter based on
-										// that string
+
+										// if searchQuery !="" apply the list
+										// adapter
 										if (searchQuery != "") {
 											MainFragment.adapter.getFilter()
 													.filter(searchQuery);
@@ -537,6 +544,7 @@ public class MainActivity extends Activity implements
 
 									}
 								})
+
 						.setNegativeButton("Cancel",
 								new DialogInterface.OnClickListener() {
 
@@ -612,7 +620,7 @@ public class MainActivity extends Activity implements
 
 	public void launchDialogFragment(dialogType type) {
 		AlertDialogFragment dialogFrag = AlertDialogFragment.newInstance(type);
-		dialogFrag.show(getFragmentManager(), "fragment_search");
+		dialogFrag.show(getFragmentManager(), "search_dialog");
 	}
 
 }

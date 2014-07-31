@@ -20,6 +20,7 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
 import android.widget.AdapterView.OnItemClickListener;
+import android.widget.TextView;
 
 /**
  * @author michael
@@ -32,12 +33,13 @@ public class MainFragment extends Fragment{
 	static ArrayList<HashMap<String, String>> arrayList = new ArrayList<HashMap<String, String>>();
 	static Context m_context;
 	public static SimpleAdapter adapter;
+	static TextView emptyList;
 
 
 	// interface
 	public interface listItemSelected {
 		
-		void passData(int arg2);
+		void passData(int arg2, String title);
 	}
 
 	// private connection
@@ -80,6 +82,8 @@ public class MainFragment extends Fragment{
 		
 		//find the list by ID
 		list = (ListView) view.findViewById(R.id.list);
+		emptyList = (TextView) view.findViewById(R.id.empty);
+
 		
 		//inflate custom list header
 		View customListHeader = inflater.inflate(R.layout.list_header, container);
@@ -97,8 +101,11 @@ public class MainFragment extends Fragment{
 				System.out.println("MainFragment.onItemClick");
 				 System.out.println("arrayList arg2: " + (arg2));
 				// System.out.println("arrayList: " + arrayList);
+				 String title = arrayList.get(arg2).get("title");
+				 System.out.println("title: " + title);
+
 				
-				parent.passData(arg2);
+				parent.passData(arg2, title);
 
 			}
 		});
@@ -113,11 +120,13 @@ public class MainFragment extends Fragment{
 
 		arrayList = passedArray;
 		
-		SimpleAdapter adapter = new SimpleAdapter(m_context, arrayList,
+		adapter = new SimpleAdapter(m_context, arrayList,
 				R.layout.list_row, new String[] { "title", "mag",
 						"depth" }, new int[] { R.id.title });
-
+		
 		list.setAdapter(adapter);
+		
+		list.setEmptyView(emptyList);
 
 
 	}
