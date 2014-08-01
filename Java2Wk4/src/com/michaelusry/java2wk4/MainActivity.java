@@ -1,11 +1,11 @@
 /*
- * Project		Java2Wk3
+ * Project		Java2Wk4
  * 
  * package		com.michaelusry.java2wk4
  * 
  * @author		Michael Usry
  * 
- * date			Jul 24, 2014
+ * date			Jul 31, 2014
  * 
  * purpose: This will access a json list of the last 50 quakes recorded.  The app checks
  * for network connection.  If there is no connection it will check to see if there is a local
@@ -15,7 +15,9 @@
  * rating.  A saved state allows info to be passed back to the main activity.
  * 
  * Week 3 addition: fragments.  If the device is rotated to landscape then the main and detail
- * fragments are displayed side by side. 	
+ * fragments are displayed side by side.
+ * 
+ * Week 4 Additions: Action bar for preferences, favorites and search	
  * 
  */
 package com.michaelusry.java2wk4;
@@ -59,6 +61,7 @@ import android.widget.TextView;
 public class MainActivity extends Activity implements
 		MainFragment.listItemSelected {
 
+	// Variables
 	static String TAG = MainActivity.class.getSimpleName();
 	static ListView list;
 	static MyService collector;
@@ -121,6 +124,7 @@ public class MainActivity extends Activity implements
 		// shared preferences
 		preferences = PreferenceManager.getDefaultSharedPreferences(m_context);
 
+		// editable shared preference
 		edit = preferences.edit();
 
 		// check if name string is empty
@@ -151,6 +155,7 @@ public class MainActivity extends Activity implements
 
 			}
 
+			// no saved instance
 		} else {
 			// check connection status
 			if (cs.isOnline(m_context)) {
@@ -168,7 +173,9 @@ public class MainActivity extends Activity implements
 					getData();
 				}
 
+				// no connection
 			} else {
+
 				// no internet connection
 				File fileCheck = getBaseContext().getFileStreamPath(filename);
 				if (fileCheck.exists()) {
@@ -182,6 +189,8 @@ public class MainActivity extends Activity implements
 
 					alert.show();
 					parseJSONToList();
+
+					// no file on device
 				} else {
 					// if the user is not connected let them know it is required
 					AlertDialog.Builder alert = new AlertDialog.Builder(this);
@@ -197,6 +206,14 @@ public class MainActivity extends Activity implements
 
 	}
 
+	/*
+	 * Handler for getjsonservice.  In the static inner class there is a weak reference to
+	 * prevent leaks.  It received the object from the messenger.  It checks to see if RESULT_OK
+	 * and the object is not null.  If yes it write the file to the device using fileManager.
+	 * Finishes with the parsejsontolist method.
+	 * 
+	 */
+	
 	private static class MyHandler extends Handler {
 
 		private final WeakReference<MainActivity> myActivity;
@@ -233,6 +250,8 @@ public class MainActivity extends Activity implements
 			}
 		}
 	}
+	
+	// holds the messenger to start the service
 
 	public void getData() {
 		Messenger newMessenger = new Messenger(myHandler);
@@ -245,6 +264,8 @@ public class MainActivity extends Activity implements
 
 		startService(newIntent);
 	}
+	
+	// Reads the file from the device, transfers to the fragment to display the list
 
 	public static void parseJSONToList() {
 
@@ -386,8 +407,7 @@ public class MainActivity extends Activity implements
 		// TODO Auto-generated method stub
 
 		System.out.println("passData.arg2 = " + arg2);
-		
-		title = title;
+
 
 		DetailsFragment dFrag = (DetailsFragment) getFragmentManager()
 				.findFragmentById(R.id.fragment_detail);
@@ -444,22 +464,26 @@ public class MainActivity extends Activity implements
 
 	}
 
+	// different options for the action bar items
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 
 		switch (item.getItemId()) {
 
+		// search 
 		case R.id.action_search:
 			// call method
 			launchDialogFragment(dialogType.SEARCH);
 			return true;
 
+		// favorites
 		case R.id.action_favorites:
 
 			actionFavorites();
 
 			return true;
 
+			// preferences
 		case R.id.action_preference:
 
 			launchDialogFragment(dialogType.PREFS);
@@ -532,8 +556,8 @@ public class MainActivity extends Activity implements
 										// user input
 										String searchQuery = searchText
 												.getText().toString();
-										System.out.println("searchQuery: "+searchQuery);
-
+										System.out.println("searchQuery: "
+												+ searchQuery);
 
 										// if searchQuery !="" apply the list
 										// adapter

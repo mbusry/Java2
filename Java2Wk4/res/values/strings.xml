@@ -21,24 +21,6 @@
     <string name="action_preference">Preferences</string>
     <string name="action_search">Search</string>
     <string name="action_favorites">Favorites</string>
-    <string name ="search_type">Select the magnitude range</string>
-	<string name="btn_get">Get</string>
-	<string name ="result">Results:</string>
-	<string name="spinner">spinner</string>
-	<string name="instructions">instructions</string>
-	
-	
-		<string-array name='mag_array'>
-	    <item> less than 1.0</item>
-	    <item>Between 1.0 thru 3.0</item>
-	    <item>Between 3.1 thru 4.0</item>
-	    <item>Between 4.1 thru 5.0</item>
-	    <item>Between 5.1 thru 7.0</item>
-	    <item>Between 7.1 thru 8.0</item>
-	    <item>8.1 or more</item>
-	    <item>Last 50</item>
-	    	    	    	    	    	    	    
-	</string-array>
 	
     
 
